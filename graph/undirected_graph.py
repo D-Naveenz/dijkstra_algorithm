@@ -1,43 +1,36 @@
-from graph import AdjNode, Edge, AdjList
-
-
-class UAdjNode(AdjNode):
-    def __init__(self, vertex: int, size=None, next_node=None, prev_node=None):
-        super().__init__(vertex, size, next_node)
-        self.prev_node = prev_node
+from adjlist import AdjNode, Edge, AdjList
 
 
 class UndirectedGraph(AdjList):
     def __init__(self, edges: list[Edge]):
         super().__init__(edges)
 
-    def add_node(self, v: int, t: UAdjNode = None):
-        new_node = UAdjNode(v)
+    def add_edge(self, edge: Edge):
+        # check source node already in there
+        src_node = self.find_vertex_by_value(edge.src)
+        if src_node is None:
+            # add source node to the list
+            src_node = self.add_node(edge.src)
 
-        if t is None:
-            # add the vertex to the node list as a new
-            self.create_vertex(new_node)
-        else:
-            # search the last node of the selected path of the adjacency list
-            while t.next_node is not None:
-                t = t.next_node
-            # link the new node
-            t.next_node = new_node
-            new_node.prev_node = t
+        # search destination node whether exist or not
+        des_node = self.find_vertex_by_value(edge.dest)
+        if des_node is None:
+            # add destination node to the list
+            des_node = self.add_node(edge.dest, src_node)
 
-        return new_node
+        # Create the edge
+        edge.src = src_node
+        edge.dest = des_node
 
-    def remove_node(self, src: UAdjNode, tgt: int):
-        start_ptr = src
+        # create a new edge for reverse the direction
+        rev_edge = Edge(des_node, src_node)
+        self._edges.append(rev_edge)
 
-        while src.next_node.vertex is tgt:
-            if src is None:
-                return
-
-            src = src.next_node
-
-        # Detach the target node from the linked list
-        src.next_node = src.next_node.next_node
-        src.next_node.next_node.prev_node = src
-        # remove the edge
-        self.remove_edge(start_ptr, src)
+    def remove_edge(self, src: AdjNode, tgt: AdjNode):
+        for i in self._edges:
+            if i.src is src and i.dest is tgt:
+                # delete edge directly from the edges list
+                self._edges.remove(i)
+            elif i.src is tgt and i.dest is src:
+                # delete edge directly from the edges list
+                self._edges.remove(i)

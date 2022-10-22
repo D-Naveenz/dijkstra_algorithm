@@ -25,11 +25,26 @@ def initialize():
 
 
 def solve():
-    path = paths.shortest_path(kandy)[0]
-    print(path)
+    path, min_size = paths.shortest_path(kandy)
+
+    # printing the path like a string of numbers
+    for i in path:
+        print(i, end=" ")
+    print()
+
+    # calculating the number of trips
+    trips = students // min_size
+    if students % min_size != 0:
+        trips = trips + 1
+    # printing the minimum number of trips
+    print(trips)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # header
+    students = int(input("Enter the number of foreign students: "))
+    aiesec = int(input("Enter the number of AIESEC students: "))
+
     initialize()
     solve()

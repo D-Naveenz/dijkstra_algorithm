@@ -31,9 +31,9 @@ class Graph(AdjList, ABC):
 
             new_distance = dist[node] + self.get_edge(node, next_node).size
 
-            # checking the current distance is whether min/max
+            # checking the current distance which can be minimum
             if is_visited(next_node):
-                if dist[next_node] < new_distance:
+                if dist[next_node] > new_distance:
                     dist[next_node] = new_distance
             else:
                 dist[next_node] = new_distance
@@ -44,8 +44,29 @@ class Graph(AdjList, ABC):
 
             return max_distance(node, it, max_node)
 
+        def min_distance():
+            prev = None
+            _min = None
+            for i in path:
+                if prev is None:
+                    prev = i
+                    continue
+
+                tgt = self.get_edge(prev, i)
+                if _min is None:
+                    _min = tgt.size
+                elif _min > tgt.size:
+                    _min = tgt.size
+
+                prev = i
+
+            return _min
+
         while src in waiting and self.vertices[src] is not None:
-            path.append(max_distance(src, iter(self.vertices[src])))
+            result = max_distance(src, iter(self.vertices[src]))
+            if result not in path:
+                path.append(result)
+            # removing the processed node from the waiting list
             waiting.remove(src)
 
             for x in self.vertices[src]:
@@ -53,6 +74,4 @@ class Graph(AdjList, ABC):
                     src = x
                     break
 
-        return path, dist
-
-
+        return path, int(min_distance())

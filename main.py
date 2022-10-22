@@ -1,8 +1,8 @@
 import sys
 
-from graph import UndirectedGraph
+from graph import UndirectedGraph, AdjList
 
-paths = UndirectedGraph()
+paths = UndirectedGraph(AdjList())
 kandy = "1"
 
 

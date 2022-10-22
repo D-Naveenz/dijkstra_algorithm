@@ -1,16 +1,27 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Iterator
 
-from graph.adjlist import AdjList
+from graph.adj_abstract import AdjacencyStruct
 
 
-class Graph(AdjList, ABC):
+class GraphStruct(ABC):
+    def __init__(self, struct: AdjacencyStruct, descript: str):
+        self.descript = descript
+        self._adj = struct
+
+    @abstractmethod
+    def add_edge(self, src, dest, size):
+        pass
+
+    @abstractmethod
+    def remove_edge(self, src, tgt):
+        pass
 
     def shortest_path(self, src: str):
         """Dijkstra's Algorithm"""
         dist = {src: 0}  # hashmap for store distances
         path = [src]
-        waiting = set(self.vertices)
+        waiting = set(self._adj.get_vertices)
 
         def is_visited(tgt: str):
             if tgt in dist:
@@ -26,10 +37,13 @@ class Graph(AdjList, ABC):
 
             # bypass method
             if next_node not in waiting:
-                next(it)
+                try:
+                    next(it)
+                except StopIteration:
+                    return max_node
                 return max_distance(node, it)
 
-            new_distance = dist[node] + self.get_edge(node, next_node).size
+            new_distance = dist[node] + self._adj.get_edge(node, next_node).size
 
             # checking the current distance which can be minimum
             if is_visited(next_node):
@@ -52,7 +66,7 @@ class Graph(AdjList, ABC):
                     prev = i
                     continue
 
-                tgt = self.get_edge(prev, i)
+                tgt = self._adj.get_edge(prev, i)
                 if _min is None:
                     _min = tgt.size
                 elif _min > tgt.size:
@@ -62,14 +76,14 @@ class Graph(AdjList, ABC):
 
             return _min
 
-        while src in waiting and self.vertices[src] is not None:
-            result = max_distance(src, iter(self.vertices[src]))
+        while src in waiting and self._adj.get_vertex(src) is not None:
+            result = max_distance(src, iter(self._adj.get_vertex(src)))
             if result not in path:
                 path.append(result)
             # removing the processed node from the waiting list
             waiting.remove(src)
 
-            for x in self.vertices[src]:
+            for x in self._adj.get_vertex(src):
                 if x in waiting and is_visited(x):
                     src = x
                     break

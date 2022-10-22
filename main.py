@@ -1,3 +1,8 @@
+# *************************************************************************************
+# Author: Naveen Dharmathunga
+# Github: https://github.com/D-Naveenz/dijkstra_algorithm
+# *************************************************************************************
+
 import sys
 
 from graph import UndirectedGraph, AdjList

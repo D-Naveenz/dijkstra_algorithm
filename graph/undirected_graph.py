@@ -1,29 +1,30 @@
-from adjlist import AdjNode, Edge, AdjList
+from adjlist import AdjNode, Edge
+from graph import Graph
 
 
-class UndirectedGraph(AdjList):
-    def __init__(self, edges: list[Edge]):
-        super().__init__(edges)
+class UndirectedGraph(Graph):
+    def __init__(self):
+        super().__init__()
 
-    def add_edge(self, edge: Edge):
+    def add_edge(self, src: int, dest: int, size=None):
         # check source node already in there
-        src_node = self.find_vertex_by_value(edge.src)
+        src_node = self.get_vertex_by_value(src)
         if src_node is None:
             # add source node to the list
-            src_node = self.add_node(edge.src)
+            src_node = self.add_node(src)
 
         # search destination node whether exist or not
-        des_node = self.find_vertex_by_value(edge.dest)
+        des_node = self.get_vertex_by_value(dest)
         if des_node is None:
             # add destination node to the list
-            des_node = self.add_node(edge.dest, src_node)
+            des_node = self.add_node(dest, src_node)
 
         # Create the edge
-        edge.src = src_node
-        edge.dest = des_node
+        edge = Edge(src_node, des_node, size)
+        self._edges.append(edge)
 
         # create a new edge for reverse the direction
-        rev_edge = Edge(des_node, src_node)
+        rev_edge = Edge(des_node, src_node, size)
         self._edges.append(rev_edge)
 
     def remove_edge(self, src: AdjNode, tgt: AdjNode):

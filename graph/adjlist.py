@@ -1,23 +1,24 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import Any
 
 
+@dataclass
 class AdjNode:
-    def __init__(self, vertex: int, size=None, next_node=None):
-        self.vertex = vertex
-        self.size = size
-        self.next_node = next_node
+    vertex: int
+    next_node = None
 
 
+@dataclass
 class Edge:
-    def __init__(self, src: int | AdjNode, dest: int | AdjNode, size=None):
-        self.src = src
-        self.dest = dest
-        self.size = size
+    src: AdjNode
+    dest: AdjNode
+    size: Any
 
 
 class AdjList(ABC):
-    def __init__(self, edges: list[Edge]):
-        self._edges: list[Edge] = edges
+    def __init__(self):
+        self._edges: list[Edge] = []
         self._vertices: list[AdjNode] = []
 
     @property
@@ -28,7 +29,7 @@ class AdjList(ABC):
     def no_of_vertices(self):
         return len(self._vertices)
 
-    def find_vertex_by_value(self, val):
+    def get_vertex_by_value(self, val):
         for i in self._vertices:
             if i.vertex is val:
                 return i
@@ -42,10 +43,10 @@ class AdjList(ABC):
 
         return None
 
-    def create_vertex(self, v: AdjNode):
+    def _create_vertex(self, v: AdjNode):
         self._vertices.append(v)
 
-    def remove_vertex(self, v: AdjNode):
+    def _remove_vertex(self, v: AdjNode):
         tmp_val = v.vertex
 
         # delete vertex directly from the vertices list
@@ -60,7 +61,7 @@ class AdjList(ABC):
 
         if t is None:
             # add the vertex to the node list as a new
-            self.create_vertex(new_node)
+            self._create_vertex(new_node)
         else:
             # search the last node of the selected path of the adjacency list
             while t.next_node is not None:
@@ -85,7 +86,7 @@ class AdjList(ABC):
         self.remove_edge(start_ptr, src)
 
     @abstractmethod
-    def add_edge(self, edge: Edge):
+    def add_edge(self, src: int, dest: int, size=None):
         pass
 
     @abstractmethod

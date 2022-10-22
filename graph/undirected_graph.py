@@ -8,14 +8,17 @@ class UndirectedGraph(Graph):
 
     def add_edge(self, src: str, dest: str, size=None):
         # check source node already in there
-        if src in self.vertices:
+        if src not in self.vertices:
             # add source node to the list
             self.add_node(src)
 
         # search destination node whether exist or not
-        if dest in self.vertices:
+        if dest not in self.vertices:
             # add destination node to the list
-            self.add_node(dest, src)
+            self.add_node(dest)
+
+        # link them together
+        self.add_node(dest, src)
 
         # Create the edge
         edge = Edge(src, dest, size)

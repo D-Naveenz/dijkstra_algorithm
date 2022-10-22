@@ -13,7 +13,7 @@ class Edge:
 class AdjList(ABC):
     def __init__(self):
         self._edges: list[Edge] = []
-        self.vertices: dict[str, str | None] = {}  # key: vertex, value: next node
+        self.vertices: dict[str, list[str] | None] = {}  # key: vertex, value: next node
 
     @property
     def no_of_edges(self):
@@ -22,13 +22,6 @@ class AdjList(ABC):
     @property
     def no_of_vertices(self):
         return len(self.vertices)
-
-    # def get_vertex_by_value(self, val):
-    #     for i in self._vertices:
-    #         if i.vertex is val:
-    #             return i
-    #
-    #     return None
 
     def get_edge(self, src: str, dest: str):
         for i in self._edges:
@@ -55,25 +48,17 @@ class AdjList(ABC):
             # add the vertex to the node list as a new
             self._create_vertex(v)
         else:
-            # search the last node of the selected path of the adjacency list
-            while self.vertices[t] is not None:
-                t = self.vertices[t]
             # link the new node
-            self.vertices[t] = v
+            if self.vertices[t] is None:
+                self.vertices[t] = [v]
+            else:
+                self.vertices[t].append(v)
 
     def remove_node(self, src: str, tgt: str):
-        start_ptr = src
-
-        while self.vertices[src] is not tgt:
-            if src is None:
-                return
-
-            src = self.vertices[src]
-
-        # Detach the target node from the linked list
-        self.vertices[src] = self.vertices[self.vertices[src]]
+        # remove node from the list of source vertex
+        self.vertices[src].remove(tgt)
         # remove the edge
-        self.remove_edge(start_ptr, src)
+        self.remove_edge(src, tgt)
 
     @abstractmethod
     def add_edge(self, src: str, dest: str, size=None):

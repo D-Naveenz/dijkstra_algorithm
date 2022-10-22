@@ -4,22 +4,16 @@ from typing import Any
 
 
 @dataclass
-class AdjNode:
-    vertex: int
-    next_node = None
-
-
-@dataclass
 class Edge:
-    src: AdjNode
-    dest: AdjNode
+    src: str
+    dest: str
     size: Any
 
 
 class AdjList(ABC):
     def __init__(self):
         self._edges: list[Edge] = []
-        self._vertices: list[AdjNode] = []
+        self.vertices: dict[str, str | None] = {}  # key: vertex, value: next node
 
     @property
     def no_of_edges(self):
@@ -27,68 +21,64 @@ class AdjList(ABC):
 
     @property
     def no_of_vertices(self):
-        return len(self._vertices)
+        return len(self.vertices)
 
-    def get_vertex_by_value(self, val):
-        for i in self._vertices:
-            if i.vertex is val:
-                return i
+    # def get_vertex_by_value(self, val):
+    #     for i in self._vertices:
+    #         if i.vertex is val:
+    #             return i
+    #
+    #     return None
 
-        return None
-
-    def get_edge(self, src: int, dest: int):
+    def get_edge(self, src: str, dest: str):
         for i in self._edges:
-            if i.src.vertex is src and i.dest.vertex is dest:
+            if i.src is src and i.dest is dest:
                 return i
 
         return None
 
-    def _create_vertex(self, v: AdjNode):
-        self._vertices.append(v)
+    def _create_vertex(self, v: str):
+        self.vertices[v] = None
 
-    def _remove_vertex(self, v: AdjNode):
-        tmp_val = v.vertex
+    def _remove_vertex(self, v: str):
+        tmp_val = v
 
         # delete vertex directly from the vertices list
-        self._vertices.remove(v)
+        self.vertices.pop(v)
 
         # find the occurrences of the target vertex as a node in the list. and remove
-        for i in self._vertices:
+        for i in self.vertices:
             self.remove_node(i, tmp_val)
 
-    def add_node(self, v: int, t: AdjNode = None):
-        new_node = AdjNode(v)
-
+    def add_node(self, v: str, t: str = None):
         if t is None:
             # add the vertex to the node list as a new
-            self._create_vertex(new_node)
+            self._create_vertex(v)
         else:
             # search the last node of the selected path of the adjacency list
-            while t.next_node is not None:
-                t = t.next_node
+            while self.vertices[t] is not None:
+                t = self.vertices[t]
             # link the new node
-            t.next_node = new_node
+            self.vertices[t] = v
 
-        return new_node
-
-    def remove_node(self, src: AdjNode, tgt: int):
+    def remove_node(self, src: str, tgt: str):
         start_ptr = src
 
-        while src.next_node.vertex is tgt:
+        while self.vertices[src] is not tgt:
             if src is None:
                 return
 
-            src = src.next_node
+            src = self.vertices[src]
 
         # Detach the target node from the linked list
-        src.next_node = src.next_node.next_node
+        self.vertices[src] = self.vertices[self.vertices[src]]
         # remove the edge
         self.remove_edge(start_ptr, src)
 
     @abstractmethod
-    def add_edge(self, src: int, dest: int, size=None):
+    def add_edge(self, src: str, dest: str, size=None):
         pass
 
     @abstractmethod
-    def remove_edge(self, src: AdjNode, tgt: AdjNode):
+    def remove_edge(self, src: str, tgt: str):
         pass

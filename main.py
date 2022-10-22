@@ -3,23 +3,25 @@ import sys
 from graph import UndirectedGraph
 
 paths = UndirectedGraph()
-kandy = 1
+kandy = "1"
 
 
 def initialize():
-    cities = int(input("No of cities: "))
+    cities, roads = list(map(int, input().split(maxsplit=2)))
     if cities > 100:
         print("cities must be less than or equal to 100")
         sys.exit(-1)
-    roads = int(input("No of roads: "))
 
     for x in range(roads):
-        c1, c2, p = list(map(int, input().split(maxsplit=3)))
+        c1, c2, p = input().split(maxsplit=3)
+        p = int(p)
         if p <= 1:
             print("P must be greater than 1")
             sys.exit(-1)
 
         paths.add_edge(c1, c2, p)
+
+    print()
 
 
 def solve():
